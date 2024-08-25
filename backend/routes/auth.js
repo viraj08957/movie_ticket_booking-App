@@ -1,5 +1,5 @@
-import express from 'express';
-import { registerUser, verifyOtp, loginUser } from '../Service/authService.js';
+const express = require('express');
+const { registerUser, verifyOtp, loginUser } = require('../services/authService.js');
 
 const router = express.Router();
 
@@ -30,4 +30,4 @@ router.post('/login', async (req, res) => {
     }
 });
 
-export default router;
+module.exports = router;
