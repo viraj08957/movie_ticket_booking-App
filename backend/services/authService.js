@@ -73,18 +73,21 @@ const verifyOtp = async (email, otp) => {
 
 // Function to log in a user
 const loginUser = async (email, password) => {
+    // Check if email and password match admin credentials
+    if (email === 'admin123@gmail.com' && password === 'adminpassword123') {
+        return { role: 'admin' }; // Return admin role directly
+    }
+
     const user = await User.findOne({ email });
-    if (!user) throw new Error('Invalid email or password');
+    if (!user || user.password !== password) {
+        throw new Error('Invalid email or password');
+    }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) throw new Error('Invalid email or password');
-
-    if (!user.isVerified) throw new Error('User not verified');
-
-    // Generate JWT token
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
+    // Generate and return token if not admin
+    const token = 'your_jwt_token_here'; // Replace with actual token generation
     return { token };
 };
+
+
 
 module.exports = { registerUser, verifyOtp, loginUser };

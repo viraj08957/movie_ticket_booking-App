@@ -23,12 +23,20 @@ router.post('/verify-otp', async (req, res, next) => {
     }
 });
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
     try {
-        const result = await loginUser(req.body.email, req.body.password);
-        res.status(200).json(result);
+        const result = await loginUser(email, password);
+
+        if (result.role === 'admin') {
+            // Directly respond indicating admin role
+            res.json({ role: 'admin' });
+        } else {
+            // Respond with token for non-admin
+            res.json({ token: result.token });
+        }
     } catch (error) {
-        next(error);
+        res.status(401).json({ message: error.message });
     }
 });
 
