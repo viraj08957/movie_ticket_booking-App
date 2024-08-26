@@ -6,6 +6,7 @@ const Login = ({ setToken }) => {
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData({
@@ -21,6 +22,8 @@ const Login = ({ setToken }) => {
       setToken(response.data.token);
       alert('Login successful!');
     } catch (error) {
+      // Update error state with the message from the backend
+      setError(error.response?.data?.message || 'There was an error logging in!');
       console.error('There was an error logging in!', error);
     }
   };
@@ -29,6 +32,7 @@ const Login = ({ setToken }) => {
     <div className="flex justify-center items-center min-h-screen bg-gray-900 text-gray-200">
       <form onSubmit={handleSubmit} className="bg-gray-800 p-8 rounded shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
         <input
           type="email"
           name="email"

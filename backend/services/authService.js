@@ -13,6 +13,7 @@ const validateEmail = (email) => {
 
 // Function to validate phone number format
 const validatePhoneNumber = (phoneNumber) => {
+    console.log('Phone number received:', phoneNumber); // Debug logging
     const phoneRegex = /^[7-9]\d{9}$/;
     return phoneRegex.test(phoneNumber);
 };
