@@ -1,39 +1,28 @@
 const express = require('express');
-const { registerUser, verifyOtp, loginUser } = require('../services/authService.js');
+const { registerUser, loginUser } = require('../services/authService.js');
 
 const router = express.Router();
 
+// Registration route
 router.post('/register', async (req, res) => {
     try {
         const result = await registerUser(req.body);
-        res.status(200).json(result);
+        res.status(201).json(result); // Use 201 Created status code for successful registration
     } catch (error) {
-        console.error('Registration error:', error.message); 
+        console.error('Registration error:', error.message);
         res.status(400).json({ message: error.message });
     }
 });
 
-
-router.post('/verify-otp', async (req, res, next) => {
-    try {
-        const result = await verifyOtp(req.body.email, req.body.otp);
-        res.status(200).json(result);
-    } catch (error) {
-        next(error);
-    }
-});
-
+// Login route
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
         const result = await loginUser(email, password);
-
         if (result.role === 'admin') {
-            
-            res.json({ role: 'admin' });
+            res.status(200).json({ role: 'admin' }); // Return 200 OK status for successful login
         } else {
-          
-            res.json({ token: result.token });
+            res.status(200).json({ token: result.token }); // Return token for non-admin users
         }
     } catch (error) {
         res.status(401).json({ message: error.message });

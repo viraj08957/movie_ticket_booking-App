@@ -6,7 +6,7 @@ const movieSchema = new mongoose.Schema({
     description: { type: String, required: true },
     genre: { type: String, required: true },
     releaseDate: { type: Date, required: true },
-    image: { type: String, required: true } // URL to the image
+    image: { type: String, required: true } 
 });
 
 const Movie = mongoose.model('Movie', movieSchema);

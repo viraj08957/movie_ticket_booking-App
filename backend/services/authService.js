@@ -1,22 +1,19 @@
 const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User.js');
-const { sendOtp } = require('../utils/email.js');
-const { storeOtp, getOtpData, deleteOtpData } = require('../utils/otpStore.js');
 
-
+// Validate email format
 const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@(gmail\.com|numetry\.in)$/;
     return emailRegex.test(email);
 };
 
+// Validate phone number format
 const validatePhoneNumber = (phoneNumber) => {
-    console.log('Phone number received:', phoneNumber);
     const phoneRegex = /^[7-9]\d{9}$/;
     return phoneRegex.test(phoneNumber);
 };
 
+// Register user
 const registerUser = async ({ firstName, lastName, username, phoneNumber, email, password }) => {
     if (!validateEmail(email)) {
         throw new Error('Email should end with @gmail.com or @numetry.in');
@@ -44,47 +41,41 @@ const registerUser = async ({ firstName, lastName, username, phoneNumber, email,
     const hashedPassword = await bcrypt.hash(password, 10);
     const role = email.endsWith('@numetry.in') ? 'admin' : 'user';
 
+    const newUser = new User({
+        firstName,
+        lastName,
+        username,
+        phoneNumber,
+        email,
+        password: hashedPassword,
+        role
+    });
 
-    const otp = crypto.randomInt(100000, 999999).toString();
-    storeOtp(email, otp, { firstName, lastName, username, phoneNumber, email, password: hashedPassword, role });
-
-    // Send OTP
-    await sendOtp(email, otp);
-
-    return { message: 'OTP sent to email' };
-};
-
-
-const verifyOtp = async (email, otp) => {
-    const otpData = getOtpData(email);
-    if (!otpData || otpData.otp !== otp) throw new Error('Invalid OTP');
-
-   
-    const newUser = new User(otpData.userData);
     await newUser.save();
 
-    deleteOtpData(email);
-
-    return { message: 'User verified successfully' };
+    return { message: 'Registration successful' };
 };
 
-
+// Login user
 const loginUser = async (email, password) => {
-    
+    // Admin login check
     if (email === 'admin123@gmail.com' && password === 'adminpassword123') {
         return { role: 'admin' }; 
     }
 
     const user = await User.findOne({ email });
-    if (!user || user.password !== password) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
         throw new Error('Invalid email or password');
     }
 
-   
-    const token = 'your_jwt_token_here'; 
+    // Generate JWT token
+    const token = jwt.sign(
+        { id: user._id, role: user.role },
+        'your_jwt_secret', // Replace with your actual JWT secret
+        { expiresIn: '1h' } // Adjust token expiration as needed
+    );
+
     return { token };
 };
 
-
-
-module.exports = { registerUser, verifyOtp, loginUser };
+module.exports = { registerUser, loginUser };

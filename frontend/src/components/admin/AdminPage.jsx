@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaEdit, FaTrash } from 'react-icons/fa'; // Import React Icons
-import MovieForm from './MovieForm'; // Import MovieForm component
+import { FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
+import MovieForm from './MovieForm';
 
 const AdminPage = () => {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [moviesPerPage] = useState(10);
-  const [showForm, setShowForm] = useState(false); // State to control form visibility
-  const [currentMovie, setCurrentMovie] = useState(null); // State to store current movie for update
-  const navigate = useNavigate();
+  const [showForm, setShowForm] = useState(false);
+  const [currentMovie, setCurrentMovie] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showSearchResult, setShowSearchResult] = useState(false);
+  const [searchResult, setSearchResult] = useState(null);
 
   const fetchMovies = async () => {
     try {
@@ -34,27 +35,49 @@ const AdminPage = () => {
   };
 
   const handleAddMovieClick = () => {
-    setCurrentMovie(null); // Clear current movie for adding new movie
-    setShowForm(true); // Show the MovieForm when Add Movie is clicked
+    setCurrentMovie(null);
+    setShowForm(true);
   };
 
   const handleEditClick = (movie) => {
-    setCurrentMovie(movie); // Set the current movie to be edited
-    setShowForm(true); // Show the MovieForm for editing
+    setCurrentMovie(movie);
+    setShowForm(true);
   };
 
   const handleDeleteClick = async (id) => {
     try {
       await axios.delete(`http://localhost:8000/api/movies/delete-movie/${id}`);
-      setMovies(movies.filter(movie => movie._id !== id)); // Remove the deleted movie from the list
+      setMovies(movies.filter(movie => movie._id !== id));
     } catch (error) {
       console.error('Error deleting movie:', error);
     }
   };
 
   const handleCloseForm = () => {
-    setShowForm(false); // Hide the MovieForm when Cancel is clicked
-    fetchMovies(); // Refresh movie list
+    setShowForm(false);
+    fetchMovies();
+  };
+
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/api/movies/search-by-name`, {
+        params: { name: searchTerm }
+      });
+      if (response.data.length > 0) {
+        setSearchResult(response.data[0]);
+        setShowSearchResult(true);
+      } else {
+        setSearchResult(null);
+        setShowSearchResult(false);
+      }
+    } catch (error) {
+      console.error('Error searching movie:', error);
+    }
+  };
+
+  const handleCloseSearchResult = () => {
+    setShowSearchResult(false);
+    setSearchResult(null);
   };
 
   return (
@@ -70,14 +93,30 @@ const AdminPage = () => {
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
       <p className="mb-4">Welcome to the admin dashboard. Here you can manage various aspects of the application.</p>
 
-      {/* Container for table and button */}
-      <div className="relative">
+      <div className="relative mb-4">
         <div className="flex justify-end mb-4">
           <button
             onClick={handleAddMovieClick}
             className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700"
           >
             Add Movie
+          </button>
+        </div>
+
+        <div className="flex mb-4">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by title..."
+            className="p-2 rounded border border-gray-600 text-gray-900 mr-2"
+          />
+          <button
+            onClick={handleSearch}
+            className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 flex items-center"
+          >
+            <FaSearch className="mr-2" />
+            Search
           </button>
         </div>
 
@@ -95,7 +134,7 @@ const AdminPage = () => {
                   <th className="p-3 text-left text-sm font-semibold text-gray-200">Genre</th>
                   <th className="p-3 text-left text-sm font-semibold text-gray-200">Release Date</th>
                   <th className="p-3 text-left text-sm font-semibold text-gray-200">Image</th>
-                  <th className="p-3 text-left text-sm font-semibold text-gray-200">Actions</th> {/* New header for actions */}
+                  <th className="p-3 text-left text-sm font-semibold text-gray-200">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -150,9 +189,26 @@ const AdminPage = () => {
         </div>
       </div>
 
-      {/* MovieForm component */}
       {showForm && (
         <MovieForm onClose={handleCloseForm} movie={currentMovie} />
+      )}
+
+      {showSearchResult && searchResult && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-gray-800 text-gray-200 p-4 rounded-lg w-1/3 max-w-sm relative">
+            <button
+              onClick={handleCloseSearchResult}
+              className="absolute top-2 right-2 text-gray-400 hover:text-gray-300"
+            >
+              X
+            </button>
+            <h2 className="text-xl font-bold mb-2">{searchResult.title}</h2>
+            <img src={searchResult.image} alt={searchResult.title} className="w-full h-auto rounded mb-2" />
+            <p className="mb-2"><strong>Description:</strong> {searchResult.description}</p>
+            <p className="mb-2"><strong>Genre:</strong> {searchResult.genre}</p>
+            <p><strong>Release Date:</strong> {new Date(searchResult.releaseDate).toLocaleDateString()}</p>
+          </div>
+        </div>
       )}
     </div>
   );
