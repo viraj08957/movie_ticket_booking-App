@@ -8,7 +8,7 @@ router.post('/register', async (req, res) => {
         const result = await registerUser(req.body);
         res.status(200).json(result);
     } catch (error) {
-        console.error('Registration error:', error.message); // Improved error logging
+        console.error('Registration error:', error.message); 
         res.status(400).json({ message: error.message });
     }
 });
@@ -29,10 +29,10 @@ router.post('/login', async (req, res) => {
         const result = await loginUser(email, password);
 
         if (result.role === 'admin') {
-            // Directly respond indicating admin role
+            
             res.json({ role: 'admin' });
         } else {
-            // Respond with token for non-admin
+          
             res.json({ token: result.token });
         }
     } catch (error) {

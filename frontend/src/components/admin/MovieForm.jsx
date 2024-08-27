@@ -1,99 +1,132 @@
-// src/pages/MovieForm.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
-const MovieForm = () => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [genre, setGenre] = useState('');
-  const [releaseDate, setReleaseDate] = useState('');
-  const [image, setImage] = useState('');
-  const navigate = useNavigate();
+const MovieForm = ({ onClose, movie }) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    genre: '',
+    releaseDate: '',
+    image: '',
+  });
+
+  useEffect(() => {
+    if (movie) {
+      setFormData({
+        title: movie.title,
+        description: movie.description,
+        genre: movie.genre,
+        releaseDate: new Date(movie.releaseDate).toISOString().split('T')[0],
+        image: movie.image,
+      });
+    }
+  }, [movie]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/movies/add-movie', {
-        title,
-        description,
-        genre,
-        releaseDate,
-        image,
-      });
-      alert('Movie added successfully!');
-      navigate('/admin-dashboard'); // Navigate back to the admin dashboard
+      if (movie) {
+        // Update movie
+        await axios.put(`http://localhost:8000/api/movies/update-movie/${movie._id}`, formData);
+      } else {
+        // Add new movie
+        await axios.post('http://localhost:8000/api/movies/add-movie', formData);
+      }
+      onClose();
     } catch (error) {
-      alert('Failed to add movie');
-      console.error('Error:', error);
+      console.error('Error submitting form:', error);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-200 p-8">
-      <h1 className="text-3xl font-bold mb-6">Add Movie</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-lg mb-1" htmlFor="title">Title</label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-lg mb-1" htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-lg mb-1" htmlFor="genre">Genre</label>
-          <input
-            id="genre"
-            type="text"
-            value={genre}
-            onChange={(e) => setGenre(e.target.value)}
-            className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-lg mb-1" htmlFor="releaseDate">Release Date</label>
-          <input
-            id="releaseDate"
-            type="date"
-            value={releaseDate}
-            onChange={(e) => setReleaseDate(e.target.value)}
-            className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-lg mb-1" htmlFor="image">Image URL</label>
-          <input
-            id="image"
-            type="text"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-            className="w-full p-2 rounded bg-gray-800 border border-gray-700"
-            placeholder="https://example.com/path/to/image.jpg"
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700"
-        >
-          Add Movie
-        </button>
-      </form>
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-80">
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-lg">
+        <h2 className="text-2xl font-bold text-gray-100 mb-4">{movie ? 'Update Movie' : 'Add Movie'}</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2" htmlFor="title">Title</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-700 bg-gray-900 text-gray-200 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2" htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-700 bg-gray-900 text-gray-200 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2" htmlFor="genre">Genre</label>
+            <input
+              type="text"
+              id="genre"
+              name="genre"
+              value={formData.genre}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-700 bg-gray-900 text-gray-200 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2" htmlFor="releaseDate">Release Date</label>
+            <input
+              type="date"
+              id="releaseDate"
+              name="releaseDate"
+              value={formData.releaseDate}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-700 bg-gray-900 text-gray-200 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2" htmlFor="image">Image URL</label>
+            <input
+              type="text"
+              id="image"
+              name="image"
+              value={formData.image}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-700 bg-gray-900 text-gray-200 rounded"
+              required
+            />
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-gray-600 text-gray-200 py-2 px-4 rounded mr-2 hover:bg-gray-500"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="bg-blue-600 text-gray-100 py-2 px-4 rounded hover:bg-blue-700"
+            >
+              {movie ? 'Update Movie' : 'Add Movie'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

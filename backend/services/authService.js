@@ -5,20 +5,18 @@ const User = require('../models/User.js');
 const { sendOtp } = require('../utils/email.js');
 const { storeOtp, getOtpData, deleteOtpData } = require('../utils/otpStore.js');
 
-// Function to validate email format
+
 const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@(gmail\.com|numetry\.in)$/;
     return emailRegex.test(email);
 };
 
-// Function to validate phone number format
 const validatePhoneNumber = (phoneNumber) => {
-    console.log('Phone number received:', phoneNumber); // Debug logging
+    console.log('Phone number received:', phoneNumber);
     const phoneRegex = /^[7-9]\d{9}$/;
     return phoneRegex.test(phoneNumber);
 };
 
-// Function to register a new user
 const registerUser = async ({ firstName, lastName, username, phoneNumber, email, password }) => {
     if (!validateEmail(email)) {
         throw new Error('Email should end with @gmail.com or @numetry.in');
@@ -46,7 +44,7 @@ const registerUser = async ({ firstName, lastName, username, phoneNumber, email,
     const hashedPassword = await bcrypt.hash(password, 10);
     const role = email.endsWith('@numetry.in') ? 'admin' : 'user';
 
-    // Generate OTP and store it in-memory
+
     const otp = crypto.randomInt(100000, 999999).toString();
     storeOtp(email, otp, { firstName, lastName, username, phoneNumber, email, password: hashedPassword, role });
 
@@ -56,26 +54,25 @@ const registerUser = async ({ firstName, lastName, username, phoneNumber, email,
     return { message: 'OTP sent to email' };
 };
 
-// Function to verify OTP and create user
+
 const verifyOtp = async (email, otp) => {
     const otpData = getOtpData(email);
     if (!otpData || otpData.otp !== otp) throw new Error('Invalid OTP');
 
-    // Create and save the user after successful OTP verification
+   
     const newUser = new User(otpData.userData);
     await newUser.save();
 
-    // Remove OTP data from the in-memory store
     deleteOtpData(email);
 
     return { message: 'User verified successfully' };
 };
 
-// Function to log in a user
+
 const loginUser = async (email, password) => {
-    // Check if email and password match admin credentials
+    
     if (email === 'admin123@gmail.com' && password === 'adminpassword123') {
-        return { role: 'admin' }; // Return admin role directly
+        return { role: 'admin' }; 
     }
 
     const user = await User.findOne({ email });
@@ -83,8 +80,8 @@ const loginUser = async (email, password) => {
         throw new Error('Invalid email or password');
     }
 
-    // Generate and return token if not admin
-    const token = 'your_jwt_token_here'; // Replace with actual token generation
+   
+    const token = 'your_jwt_token_here'; 
     return { token };
 };
 
