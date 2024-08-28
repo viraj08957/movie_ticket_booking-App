@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const authRoutes = require('./routes/auth');
 const movieRoutes = require('./routes/movie');
+const showRoutes = require("./routes/Show");
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/movies', movieRoutes); 
+app.use('/api/shows',showRoutes);
 
 
 app.use("/", (req, res) => {

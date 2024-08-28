@@ -6,6 +6,7 @@ import Home from './components/Home';
 import Navbar from './components/Navbar';
 import AdminPage from './components/admin/adminPage';
 import MovieForm from './components/admin/MovieForm';
+import ShowsList from './components/admin/ShowList';
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/" element={<Home/>} />
         <Route path='/admin'element={<AdminPage/>} />
         <Route path='/add-movie' element={<MovieForm/>}/>
+        <Route path='/showlist' element={<ShowsList/>}/>
         
       </Routes>
     </Router>

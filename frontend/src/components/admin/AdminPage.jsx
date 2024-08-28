@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
 import MovieForm from './MovieForm';
+import ShowForm from './ShowForm'; // Assuming you have a ShowForm component
 
 const AdminPage = () => {
   const [movies, setMovies] = useState([]);
@@ -12,6 +13,7 @@ const AdminPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSearchResult, setShowSearchResult] = useState(false);
   const [searchResult, setSearchResult] = useState(null);
+  const [showFormType, setShowFormType] = useState(null); // New state to handle form type
 
   const fetchMovies = async () => {
     try {
@@ -36,11 +38,18 @@ const AdminPage = () => {
 
   const handleAddMovieClick = () => {
     setCurrentMovie(null);
+    setShowFormType('movie');
+    setShowForm(true);
+  };
+
+  const handleAddShowClick = () => {
+    setShowFormType('show');
     setShowForm(true);
   };
 
   const handleEditClick = (movie) => {
     setCurrentMovie(movie);
+    setShowFormType('movie');
     setShowForm(true);
   };
 
@@ -92,14 +101,25 @@ const AdminPage = () => {
     >
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
       <p className="mb-4">Welcome to the admin dashboard. Here you can manage various aspects of the application.</p>
-
       <div className="relative mb-4">
         <div className="flex justify-end mb-4">
           <button
             onClick={handleAddMovieClick}
-            className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700"
+            className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700 mr-2"
           >
             Add Movie
+          </button>
+          <button
+            onClick={handleAddShowClick}
+            className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700"
+          >
+            Add Show
+          </button>
+          <button
+            onClick={() => window.location.href = '/showlist'}
+            className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700 ml-2"
+          >
+            Show List
           </button>
         </div>
 
@@ -170,7 +190,7 @@ const AdminPage = () => {
           </div>
         )}
 
-        <div className="mt-6 flex justify-between items-center">
+<div className="mt-6 flex justify-between items-center">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
@@ -189,24 +209,41 @@ const AdminPage = () => {
         </div>
       </div>
 
-      {showForm && (
+      {showForm && showFormType === 'movie' && (
         <MovieForm onClose={handleCloseForm} movie={currentMovie} />
+      )}
+
+      {showForm && showFormType === 'show' && (
+        <ShowForm onClose={handleCloseForm} />
       )}
 
       {showSearchResult && searchResult && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-gray-800 text-gray-200 p-4 rounded-lg w-1/3 max-w-sm relative">
-            <button
+
+
+          <button
               onClick={handleCloseSearchResult}
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-300"
+              className="absolute top-2 right-2 text-gray-400 hover:text-gray-500"
             >
-              X
+              &times;
             </button>
-            <h2 className="text-xl font-bold mb-2">{searchResult.title}</h2>
-            <img src={searchResult.image} alt={searchResult.title} className="w-full h-auto rounded mb-2" />
-            <p className="mb-2"><strong>Description:</strong> {searchResult.description}</p>
-            <p className="mb-2"><strong>Genre:</strong> {searchResult.genre}</p>
-            <p><strong>Release Date:</strong> {new Date(searchResult.releaseDate).toLocaleDateString()}</p>
+            <h2 className="text-2xl font-bold mb-4">Search Result</h2>
+            {searchResult ? (
+              <div>
+                <img
+                  src={searchResult.image}
+                  alt={searchResult.title}
+                  className="w-full h-auto rounded mb-4"
+                />
+                <h3 className="text-xl font-semibold mb-2">{searchResult.title}</h3>
+                <p className="mb-2">{searchResult.description}</p>
+                <p className="mb-2"><strong>Genre:</strong> {searchResult.genre}</p>
+                <p className="mb-2"><strong>Release Date:</strong> {new Date(searchResult.releaseDate).toLocaleDateString()}</p>
+              </div>
+            ) : (
+              <p className="text-gray-400">No results found</p>
+            )}
           </div>
         </div>
       )}
@@ -215,3 +252,4 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+
