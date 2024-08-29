@@ -7,6 +7,8 @@ import Navbar from './components/Navbar';
 import AdminPage from './components/admin/adminPage';
 import MovieForm from './components/admin/MovieForm';
 import ShowsList from './components/admin/ShowList';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -14,7 +16,7 @@ const App = () => {
 
   return (
     <Router>
-      <Navbar/>
+      {/* <Navbar/> */}
       <Routes>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login setToken={setToken} />} />

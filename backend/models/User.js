@@ -2,17 +2,18 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
+    lastName: { type: String },
     username: { type: String, required: true, unique: true },
     phoneNumber: { type: String, required: true },
-    email: { type: String, required: true, unique: true, match: /.+\@.+\..+/ }, 
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    isVerified: { type: Boolean, default: false },
-    role: { type: String, enum: ['admin', 'user'], default: 'user' }
-}, { timestamps: true }); 
-
+    role: { type: String, enum: ['admin', 'user'], required: true }, // Define role field
+    otp: { type: String },
+    otpExpires: { type: Date },
+    isVerified: { type: Boolean, default: false }
+});
 
 userSchema.pre('save', async function(next) {
     if (this.isModified('password')) {
