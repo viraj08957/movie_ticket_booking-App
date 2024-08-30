@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import NavigationBar from '../components/NavigationBar';
 import Slider from 'react-slick';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa'; // Importing social media icons
 
 // Slider settings
 const sliderSettings = {
@@ -11,8 +12,8 @@ const sliderSettings = {
   speed: 500,
   slidesToShow: 1,
   slidesToScroll: 1,
-  autoplay: true,        // Enable autoplay
-  autoplaySpeed: 3000,   // Change slide every 3 seconds
+  autoplay: true,
+  autoplaySpeed: 3000,
 };
 
 const sliderImages = [
@@ -94,6 +95,25 @@ const Home = () => {
           </div>
         </section>
       </main>
+      <footer className="bg-gray-900 text-gray-200 py-4">
+        <div className="container mx-auto flex justify-center space-x-6">
+          <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+            <FaFacebook size={24} />
+          </a>
+          <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
+            <FaTwitter size={24} />
+          </a>
+          <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+            <FaInstagram size={24} />
+          </a>
+          <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
+            <FaLinkedin size={24} />
+          </a>
+        </div>
+        <p className="text-center text-gray-400 mt-4">
+          © {new Date().getFullYear()} Your Company. All rights reserved.
+        </p>
+      </footer>
     </div>
   );
 };
