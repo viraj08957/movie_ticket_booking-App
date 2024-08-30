@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const authRoutes = require('./routes/auth');
 const movieRoutes = require('./routes/movie');
 const showRoutes = require('./routes/show');
+const cinemaHallRoutes = require("./routes/cinemaHall");
 
 dotenv.config();
 
@@ -37,6 +38,8 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/movies', movieRoutes);
 app.use('/api/shows', showRoutes);
+app.use('/api/cinema-halls',cinemaHallRoutes);
+
 
 app.use("/", (req, res) => {
     res.send("Server is running!");

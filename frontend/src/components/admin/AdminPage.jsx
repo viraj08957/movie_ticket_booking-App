@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaEdit, FaTrash, FaSearch } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaSearch, FaEye } from 'react-icons/fa';
 import MovieForm from './MovieForm';
-import ShowForm from './ShowForm'; // Assuming you have a ShowForm component
+import ShowForm from './ShowForm';
+import CinemaHallForm from './CinemaHallForm';
 
 const AdminPage = () => {
   const [movies, setMovies] = useState([]);
@@ -13,7 +14,12 @@ const AdminPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSearchResult, setShowSearchResult] = useState(false);
   const [searchResult, setSearchResult] = useState(null);
-  const [showFormType, setShowFormType] = useState(null); // New state to handle form type
+  const [showFormType, setShowFormType] = useState(null);
+  const [showCinemaHallForm, setShowCinemaHallForm] = useState(false);
+  const [showShowForm, setShowShowForm] = useState(false);
+  const [cinemaHalls, setCinemaHalls] = useState([]);
+  const [showCinemaHalls, setShowCinemaHalls] = useState(false);
+  const [selectedCinemaHall, setSelectedCinemaHall] = useState(null);
 
   const fetchMovies = async () => {
     try {
@@ -24,8 +30,18 @@ const AdminPage = () => {
     }
   };
 
+  const fetchCinemaHalls = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/cinema-halls');
+      setCinemaHalls(response.data);
+    } catch (error) {
+      console.error('Error fetching cinema halls:', error);
+    }
+  };
+
   useEffect(() => {
     fetchMovies();
+    fetchCinemaHalls();
   }, []);
 
   const indexOfLastMovie = currentPage * moviesPerPage;
@@ -44,7 +60,11 @@ const AdminPage = () => {
 
   const handleAddShowClick = () => {
     setShowFormType('show');
-    setShowForm(true);
+    setShowShowForm(true);
+  };
+
+  const handleAddCinemaHallClick = () => {
+    setShowCinemaHallForm(true);
   };
 
   const handleEditClick = (movie) => {
@@ -53,7 +73,7 @@ const AdminPage = () => {
     setShowForm(true);
   };
 
-  const handleDeleteClick = async (id) => {
+  const handleDeleteMovieClick = async (id) => {
     try {
       await axios.delete(`http://localhost:8000/api/movies/delete-movie/${id}`);
       setMovies(movies.filter(movie => movie._id !== id));
@@ -62,14 +82,28 @@ const AdminPage = () => {
     }
   };
 
+  const handleDeleteCinemaHallClick = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/cinema-halls/${id}`);
+      setCinemaHalls(cinemaHalls.filter(cinemaHall => cinemaHall._id !== id));
+    } catch (error) {
+      console.error('Error deleting cinema hall:', error);
+    }
+  };
+
   const handleCloseForm = () => {
     setShowForm(false);
+    setShowShowForm(false);
+    setShowCinemaHallForm(false);
+    setShowCinemaHalls(false);
+    setSelectedCinemaHall(null); // Reset selected cinema hall
     fetchMovies();
+    fetchCinemaHalls(); // Refresh cinema halls data
   };
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/movies/search-by-name`, {
+      const response = await axios.get('http://localhost:8000/api/movies/search-by-name', {
         params: { name: searchTerm }
       });
       if (response.data.length > 0) {
@@ -87,6 +121,14 @@ const AdminPage = () => {
   const handleCloseSearchResult = () => {
     setShowSearchResult(false);
     setSearchResult(null);
+  };
+
+  const handleViewCinemaHallDetails = (cinemaHall) => {
+    setSelectedCinemaHall(cinemaHall);
+  };
+
+  const handleCloseCinemaHallDetails = () => {
+    setSelectedCinemaHall(null);
   };
 
   return (
@@ -111,15 +153,27 @@ const AdminPage = () => {
           </button>
           <button
             onClick={handleAddShowClick}
-            className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700"
+            className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700 mr-2"
           >
             Add Show
+          </button>
+          <button
+            onClick={handleAddCinemaHallClick}
+            className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700 mr-2"
+          >
+            Add Cinema Hall
           </button>
           <button
             onClick={() => window.location.href = '/showlist'}
             className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700 ml-2"
           >
             Show List
+          </button>
+          <button
+            onClick={() => setShowCinemaHalls(!showCinemaHalls)}
+            className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700 ml-2"
+          >
+            {showCinemaHalls ? 'Hide Cinema Halls' : 'Show Cinema Halls'}
           </button>
         </div>
 
@@ -160,25 +214,23 @@ const AdminPage = () => {
               <tbody>
                 {currentMovies.map((movie) => (
                   <tr key={movie._id} className="border-b border-gray-600">
-                    <td className="p-3 text-sm">{movie.title}</td>
-                    <td className="p-3 text-sm">{movie.description}</td>
-                    <td className="p-3 text-sm">{movie.genre}</td>
-                    <td className="p-3 text-sm">{new Date(movie.releaseDate).toLocaleDateString()}</td>
-                    <td className="p-3">
-                      <img src={movie.image} alt={movie.title} className="w-24 h-auto rounded" />
+                    <td className="p-3 text-sm text-gray-200">{movie.title}</td>
+                    <td className="p-3 text-sm text-gray-200">{movie.description}</td>
+                    <td className="p-3 text-sm text-gray-200">{movie.genre}</td>
+                    <td className="p-3 text-sm text-gray-200">{movie.releaseDate}</td>
+                    <td className="p-3 text-sm text-gray-200">
+                      <img src={movie.image} alt={movie.title} className="w-16 h-16 object-cover" />
                     </td>
-                    <td className="p-3">
+                    <td className="p-3 text-sm text-gray-200">
                       <button
                         onClick={() => handleEditClick(movie)}
-                        className="text-yellow-500 hover:text-yellow-600 mr-2"
-                        title="Edit"
+                        className="text-green-600 hover:text-green-800 mr-2"
                       >
                         <FaEdit />
                       </button>
                       <button
-                        onClick={() => handleDeleteClick(movie._id)}
-                        className="text-red-500 hover:text-red-600"
-                        title="Delete"
+                        onClick={() => handleDeleteMovieClick(movie._id)}
+                        className="text-red-600 hover:text-red-800"
                       >
                         <FaTrash />
                       </button>
@@ -189,67 +241,127 @@ const AdminPage = () => {
             </table>
           </div>
         )}
-
-<div className="mt-6 flex justify-between items-center">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:bg-gray-600"
-          >
-            Previous
-          </button>
-          <span className="text-gray-400">Page {currentPage}</span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={indexOfLastMovie >= movies.length}
-            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:bg-gray-600"
-          >
-            Next
-          </button>
-        </div>
+        {showCinemaHalls && (
+          <div className="overflow-x-auto mt-8">
+            <h2 className="text-2xl font-bold mb-4">Cinema Halls</h2>
+            {cinemaHalls.length === 0 ? (
+              <p className="text-gray-400">No cinema halls available</p>
+            ) : (
+              <table className="w-full bg-gray-800 border border-gray-700 rounded-lg">
+                <thead className="bg-gray-700">
+                  <tr className="border-b border-gray-600">
+                    <th className="p-3 text-left text-sm font-semibold text-gray-200">Hall ID</th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-200">Film name</th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-200">Total seats </th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-200">Sold tickets</th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-200">Price of show</th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-200">Date</th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-200">Time</th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-200">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cinemaHalls.map((cinemaHall) => (
+                    <tr key={cinemaHall._id} className="border-b border-gray-600">
+                      <td className="p-3 text-sm text-gray-200">{cinemaHall.hallNumber}</td>
+                      <td className="p-3 text-sm text-gray-200">{cinemaHall.filmName}</td>
+                      <td className="p-3 text-sm text-gray-200">{cinemaHall.numberOfSeats}</td>
+                      <td className="p-3 text-sm text-gray-200">{cinemaHall.numberOfSoldTickets}</td>
+                      <td className="p-3 text-sm text-gray-200">{cinemaHall.priceOfShow}</td>
+                      <td className="p-3 text-sm text-gray-200">{cinemaHall.date}</td>
+                      <td className="p-3 text-sm text-gray-200">{cinemaHall.time}</td>
+                      <td className="p-3 text-sm text-gray-200">
+                        <button
+                          onClick={() => handleViewCinemaHallDetails(cinemaHall)}
+                          className="text-blue-600 hover:text-blue-800 mr-2"
+                        >
+                          <FaEye />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCinemaHallClick(cinemaHall._id)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <FaTrash />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
       </div>
 
-      {showForm && showFormType === 'movie' && (
-        <MovieForm onClose={handleCloseForm} movie={currentMovie} />
-      )}
+      {/* Movie Form */}
+      {showForm && <MovieForm movie={currentMovie} onClose={handleCloseForm} />}
 
-      {showForm && showFormType === 'show' && (
-        <ShowForm onClose={handleCloseForm} />
-      )}
+      {/* Show Form */}
+      {showShowForm && <ShowForm onClose={handleCloseForm} />}
 
+      {/* Cinema Hall Form */}
+      {showCinemaHallForm && <CinemaHallForm onClose={handleCloseForm} />}
+
+      {/* Search Result */}
       {showSearchResult && searchResult && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-gray-800 text-gray-200 p-4 rounded-lg w-1/3 max-w-sm relative">
-
-
-          <button
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-gray-800 p-8 rounded-lg w-1/2 max-w-lg">
+            <h2 className="text-2xl font-bold mb-4 text-gray-200">Search Result</h2>
+            <div className="mb-4">
+              <img src={searchResult.image} alt={searchResult.title} className="w-full h-48 object-cover mb-4" />
+              <p className="text-gray-200"><strong>Title:</strong> {searchResult.title}</p>
+              <p className="text-gray-200"><strong>Description:</strong> {searchResult.description}</p>
+              <p className="text-gray-200"><strong>Genre:</strong> {searchResult.genre}</p>
+              <p className="text-gray-200"><strong>Release Date:</strong> {searchResult.releaseDate}</p>
+            </div>
+            <button
               onClick={handleCloseSearchResult}
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-500"
+              className="bg-gray-600 text-gray-200 py-2 px-4 rounded hover:bg-gray-700"
             >
-              &times;
+              Close
             </button>
-            <h2 className="text-2xl font-bold mb-4">Search Result</h2>
-            {searchResult ? (
-              <div>
-                <img
-                  src={searchResult.image}
-                  alt={searchResult.title}
-                  className="w-full h-auto rounded mb-4"
-                />
-                <h3 className="text-xl font-semibold mb-2">{searchResult.title}</h3>
-                <p className="mb-2">{searchResult.description}</p>
-                <p className="mb-2"><strong>Genre:</strong> {searchResult.genre}</p>
-                <p className="mb-2"><strong>Release Date:</strong> {new Date(searchResult.releaseDate).toLocaleDateString()}</p>
-              </div>
-            ) : (
-              <p className="text-gray-400">No results found</p>
-            )}
           </div>
         </div>
       )}
+
+      {/* Cinema Hall Details */}
+      {selectedCinemaHall && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-gray-800 p-8 rounded-lg w-1/2 max-w-lg">
+            <h2 className="text-2xl font-bold mb-4 text-gray-200">Cinema Hall Details</h2>
+            <p className="text-gray-200"><strong>Hall Id:</strong> {selectedCinemaHall.hallNumber}</p>
+            <p className="text-gray-200"><strong>Film:</strong> {selectedCinemaHall.filmName}</p>
+            <p className="text-gray-200"><strong>Price:</strong> {selectedCinemaHall.priceOfShow}</p>
+            <button
+              onClick={handleCloseCinemaHallDetails}
+              className="bg-gray-600 text-gray-200 py-2 px-4 rounded hover:bg-gray-700"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Pagination */}
+      <div className="mt-8 flex justify-center">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mr-2"
+        >
+          Previous
+        </button>
+        <span className="text-gray-200">Page {currentPage}</span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={indexOfLastMovie >= movies.length}
+          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 ml-2"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
 
 export default AdminPage;
-
