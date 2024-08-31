@@ -26,7 +26,7 @@ const Login = () => {
             if (role === 'admin') {
                 navigate('/admin');
             } else {
-                navigate('/home'); // Or handle normal user redirection
+                navigate('/userpage');
             }
         } catch (error) {
             setError(error.response?.data?.message || 'There was an error logging in!');

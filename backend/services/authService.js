@@ -113,6 +113,10 @@ const loginUser = async (email, password) => {
     if (email === 'admin123@gmail.com' && password === 'adminpassword123') {
         return { role: 'admin', message: 'Admin logged in successfully' };
     }
+    if(email==='user123@gmail.com' && password==='userpassword123')
+    {
+        return {role:'user',message:'user logged in successfully'};
+    }
 
     const user = await User.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
