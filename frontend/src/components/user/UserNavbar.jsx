@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaSearch, FaUser, FaFilm } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaSearch, FaUser, FaFilm, FaHeart, FaSignOutAlt } from 'react-icons/fa'; // Import wishlist and logout icons
 import axios from 'axios';
 
 const UserNavbar = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResult, setSearchResult] = useState(null);
     const [showSearchResult, setShowSearchResult] = useState(false);
+    const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+    const [userEmail, setUserEmail] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const email = localStorage.getItem('email');
+        if (email) {
+            setUserEmail(email);
+        }
+    }, []);
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -31,6 +41,18 @@ const UserNavbar = () => {
     const handleCloseSearchResult = () => {
         setShowSearchResult(false);
         setSearchResult(null);
+    };
+
+    const handleProfileClick = () => {
+        setShowProfileDropdown(!showProfileDropdown);
+    };
+
+    const handleLogout = () => {
+        // Remove email and password from localStorage
+        localStorage.removeItem('email');
+        localStorage.removeItem('password');
+        // Redirect to the home page
+        navigate('/');
     };
 
     return (
@@ -66,9 +88,27 @@ const UserNavbar = () => {
                         <FaFilm className="text-xl" />
                         <span className="ml-2">Book Ticket</span>
                     </Link>
-                    <Link to="/profile" className="flex items-center">
-                        <FaUser className="text-xl" />
+                    <Link to="/wishlist" className="flex items-center">
+                        <FaHeart className="text-xl" />
+                        <span className="ml-2">Wishlist</span>
                     </Link>
+                    <div className="relative">
+                        <button onClick={handleProfileClick} className="flex items-center">
+                            <FaUser className="text-xl" />
+                        </button>
+                        {showProfileDropdown && userEmail && (
+                            <div className="absolute right-0 top-full mt-2 bg-gray-800 text-gray-200 p-4 rounded shadow-lg w-48 z-50">
+                                <p><strong>Welcome</strong> {userEmail}</p>
+                                <button
+                                    onClick={handleLogout}
+                                    className="flex items-center mt-4 bg-red-600 text-gray-200 py-2 px-4 rounded hover:bg-red-700"
+                                >
+                                    <FaSignOutAlt className="mr-2" />
+                                    Logout
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </nav>
 
@@ -77,7 +117,7 @@ const UserNavbar = () => {
                     <div className="bg-gray-800 p-8 rounded-lg w-1/2 max-w-lg">
                         <h2 className="text-2xl font-bold mb-4 text-gray-200">Search Result</h2>
                         <div className="mb-4">
-                            <div className="w-full h-80 overflow-hidden mb-4"> {/* Increased height to h-80 */}
+                            <div className="w-full h-80 overflow-hidden mb-4">
                                 <img 
                                     src={searchResult.image} 
                                     alt={searchResult.title} 
@@ -89,12 +129,7 @@ const UserNavbar = () => {
                             <p className="text-gray-200"><strong>Genre:</strong> {searchResult.genre}</p>
                             <p className="text-gray-200"><strong>Release Date:</strong> {searchResult.releaseDate}</p>
                         </div>
-                        <button
-                            onClick={handleCloseSearchResult}
-                            className="bg-gray-600 text-gray-200 py-2 px-4 rounded hover:bg-gray-700"
-                        >
-                            Close
-                        </button>
+                        
                     </div>
                 </div>
             )}

@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import SignUp from './components/SignUp';
 import Login from './components/Login';
 import Home from './components/Home';
-import Navbar from './components/Navbar';
 import AdminPage from './components/admin/adminPage';
 import MovieForm from './components/admin/MovieForm';
 import ShowsList from './components/admin/ShowList';
@@ -28,6 +27,7 @@ const App = () => {
         <Route path='/showlist' element={<ShowsList/>}/>
         <Route path='/userpage' element={<UserPage/>}/>
         <Route path='/buy-movies' element={<BuyMoviePage/>}/>
+        
         
       </Routes>
     </Router>

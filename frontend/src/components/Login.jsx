@@ -21,8 +21,17 @@ const Login = () => {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:8000/api/auth/login', formData);
-            const { role } = response.data;
+            const { role, email } = response.data;
 
+            // Store email and password in localStorage (note: storing passwords is not recommended)
+            localStorage.setItem('email', formData.email);
+            localStorage.setItem('password', formData.password); // Not recommended for security reasons
+
+            // Log to console to verify
+            console.log('Stored email:', localStorage.getItem('userEmail'));
+            console.log('Stored password:', localStorage.getItem('userPassword')); // Be cautious with this
+
+            // Navigate based on user role
             if (role === 'admin') {
                 navigate('/admin');
             } else {
