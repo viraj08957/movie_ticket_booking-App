@@ -10,6 +10,7 @@ import ShowsList from './components/admin/ShowList';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import UserPage from './components/user/UserPage';
+import BuyMoviePage from './components/user/BuyMoviePage';
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -26,6 +27,7 @@ const App = () => {
         <Route path='/add-movie' element={<MovieForm/>}/>
         <Route path='/showlist' element={<ShowsList/>}/>
         <Route path='/userpage' element={<UserPage/>}/>
+        <Route path='/buy-movies' element={<BuyMoviePage/>}/>
         
       </Routes>
     </Router>

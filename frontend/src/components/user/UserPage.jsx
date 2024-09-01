@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import axios from 'axios';
-import { FaSearch } from 'react-icons/fa';
 import UserNavbar from './UserNavbar';
 
 const UserPage = () => {
   const [movies, setMovies] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResult, setSearchResult] = useState(null);
-  const [showSearchResult, setShowSearchResult] = useState(false);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -22,28 +18,6 @@ const UserPage = () => {
 
     fetchMovies();
   }, []);
-
-  const handleSearch = async () => {
-    try {
-      const response = await axios.get('http://localhost:8000/api/movies/search-by-name', {
-        params: { name: searchTerm }
-      });
-      if (response.data.length > 0) {
-        setSearchResult(response.data[0]);
-        setShowSearchResult(true);
-      } else {
-        setSearchResult(null);
-        setShowSearchResult(false);
-      }
-    } catch (error) {
-      console.error('Error searching movie:', error);
-    }
-  };
-
-  const handleCloseSearchResult = () => {
-    setShowSearchResult(false);
-    setSearchResult(null);
-  };
 
   // Slider settings
   const sliderSettings = {
@@ -70,7 +44,7 @@ const UserPage = () => {
         backgroundPosition: 'center',
       }}
     >
-      <UserNavbar/>
+      <UserNavbar />
 
       <div className="p-8 bg-black bg-opacity-50 text-center">
         <h1 className="text-3xl font-bold mb-6">
@@ -87,43 +61,24 @@ const UserPage = () => {
           </Slider>
         </div>
 
-        <div className="flex justify-center mb-4">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by title..."
-            className="p-2 rounded border border-gray-600 text-gray-900 mr-2"
-          />
-          <button
-            onClick={handleSearch}
-            className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 flex items-center"
-          >
-            <FaSearch className="mr-2" />
-            Search
-          </button>
-        </div>
-
-        {showSearchResult && searchResult && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-gray-800 p-8 rounded-lg w-1/2 max-w-lg">
-              <h2 className="text-2xl font-bold mb-4 text-gray-200">Search Result</h2>
-              <div className="mb-4">
-                <img src={searchResult.image} alt={searchResult.title} className="w-full h-48 object-cover mb-4" />
-                <p className="text-gray-200"><strong>Title:</strong> {searchResult.title}</p>
-                <p className="text-gray-200"><strong>Description:</strong> {searchResult.description}</p>
-                <p className="text-gray-200"><strong>Genre:</strong> {searchResult.genre}</p>
-                <p className="text-gray-200"><strong>Release Date:</strong> {searchResult.releaseDate}</p>
+        <h2 className="text-2xl font-bold mb-4">Newly Arrived Movies</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {movies.slice(0, 4).map((movie) => (
+            <div key={movie._id} className="bg-gray-800 text-white rounded-lg overflow-hidden shadow-md">
+              <div className="relative h-96"> {/* Increased height */}
+                <img
+                  src={movie.image}
+                  alt={movie.title}
+                  className="absolute inset-0 w-full h-full object-contain" // Changed to object-contain
+                />
               </div>
-              <button
-                onClick={handleCloseSearchResult}
-                className="bg-gray-600 text-gray-200 py-2 px-4 rounded hover:bg-gray-700"
-              >
-                Close
-              </button>
+              <div className="p-4">
+                <h3 className="text-xl font-semibold mb-2">{movie.title}</h3>
+                <p className="text-gray-400 mb-4">{movie.description}</p>
+              </div>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
     </div>
   );
