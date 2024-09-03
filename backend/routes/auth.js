@@ -11,6 +11,8 @@ const router = express.Router();
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const validatePhoneNumber = (phone) => /^[7-9]\d{9}$/.test(phone);
 
+const JWT_SECRET = "edad77087f2bb65e523e3acce393c4daf097a3488fdd1731ec8179f418750b860c01f051909061209f30fd0f532a97eafc4fb05a6b8d8557d73484910ffceb23"
+
 // Helper Function to Send OTP Email
 const sendOtpEmail = async (email, otp) => {
     const transporter = nodemailer.createTransport({
@@ -33,21 +35,14 @@ const sendOtpEmail = async (email, otp) => {
 
 // User Registration
 router.post('/register', [
-    body('firstName').isLength({ min: 2 }).withMessage('First name should be at least 2 letters long')
-        .matches(/^[a-zA-Z\s]+$/).withMessage('First name should contain only letters'),
-    body('lastName').isLength({ min: 2 }).withMessage('Last name should be at least 2 letters long')
-        .matches(/^[a-zA-Z\s]+$/).withMessage('Last name should contain only letters'),
-    body('username').matches(/^[a-zA-Z0-9]+$/).withMessage('Username should contain only letters and numbers'),
-    body('phoneNumber').custom(value => validatePhoneNumber(value)).withMessage('Phone number should be in Indian format'),
-    body('email').custom(value => validateEmail(value)).withMessage('Invalid email format'),
-    body('password').isLength({ min: 6 }).withMessage('Password should be at least 6 characters long')
+    // Validation middleware...
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { firstName, lastName, username, phoneNumber, email, password } = req.body;
+    const { firstName, lastName, username, phoneNumber, email, password, role } = req.body;
 
     try {
         const userExists = await User.findOne({ email });
@@ -65,7 +60,7 @@ router.post('/register', [
             phoneNumber,
             email,
             password: hashedPassword,
-            role: 'user', // Default role value
+            role,
             otp,
             otpExpires,
             isVerified: false
@@ -77,10 +72,11 @@ router.post('/register', [
 
         res.status(200).json({ message: 'User registered successfully. Please verify your email with the OTP sent to you.' });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error during registration:', error.message);
+        console.error(error.stack); // Detailed error stack trace
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
-
 
 // OTP Verification
 router.post('/verify-otp', [
@@ -148,7 +144,7 @@ router.post('/login', [
 
         res.status(200).json({ token, message: 'Login successful' });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: error.message });
     }
 });
 
