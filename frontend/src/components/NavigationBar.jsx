@@ -18,7 +18,7 @@ const NavigationBar = () => {
           <Link to="/about" className="hover:text-blue-500">About</Link>
           <Link to="/contact" className="hover:text-blue-500">Contact</Link>
           <Link to="/login" className="hover:text-blue-500">Login</Link>
-          <Link to="/signup" className="hover:text-blue-500">Register</Link>
+          
         </div>
       </div>
     </nav>

@@ -15,12 +15,6 @@ const Navbar = () => {
           >
             Login
           </Link>
-          <Link
-            to="/signup"
-            className="text-gray-200 hover:bg-gray-700 px-3 py-2 rounded"
-          >
-            Register
-          </Link>
         </div>
       </div>
     </nav>

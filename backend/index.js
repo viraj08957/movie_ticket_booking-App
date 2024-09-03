@@ -5,7 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const authRoutes = require('./routes/auth');
 const movieRoutes = require('./routes/movie');
-const showRoutes = require('./routes/show');
+const showRoutes = require('./routes/Show');
 const cinemaHallRoutes = require("./routes/cinemaHall");
 
 dotenv.config();

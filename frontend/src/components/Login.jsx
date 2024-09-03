@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -21,15 +21,11 @@ const Login = () => {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:8000/api/auth/login', formData);
-            const { role, email } = response.data;
+            const { role, email, token } = response.data;
 
-            // Store email and password in localStorage (note: storing passwords is not recommended)
-            localStorage.setItem('email', formData.email);
-            localStorage.setItem('password', formData.password); // Not recommended for security reasons
-
-            // Log to console to verify
-            console.log('Stored email:', localStorage.getItem('userEmail'));
-            console.log('Stored password:', localStorage.getItem('userPassword')); // Be cautious with this
+            // Store email and token in localStorage
+            localStorage.setItem('email', email);
+            localStorage.setItem('token', token);
 
             // Navigate based on user role
             if (role === 'admin') {
@@ -44,9 +40,14 @@ const Login = () => {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-900 text-gray-200">
-            <form onSubmit={handleSubmit} className="bg-gray-800 p-8 rounded shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <div
+            className="flex justify-center items-center min-h-screen bg-cover bg-center"
+            style={{
+                backgroundImage: 'url(https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)'
+            }}
+        >
+            <form onSubmit={handleSubmit} className="bg-gray-800 bg-opacity-90 p-8 rounded shadow-md w-full max-w-md">
+                <h2 className="text-2xl font-bold mb-6 text-center text-gray-200">Login</h2>
                 {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
                 <input
                     type="email"
@@ -68,10 +69,18 @@ const Login = () => {
                 />
                 <button
                     type="submit"
-                    className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700 w-full"
+                    className="bg-blue-600 text-white py-3 px-6 rounded hover:bg-blue-700 w-full mb-4"
                 >
                     Login
                 </button>
+                <div className="flex justify-between text-gray-400 text-sm">
+                    <Link to="/forgot-password" className="hover:underline">
+                        Forgot Password?
+                    </Link>
+                    <Link to="/signup" className="hover:underline">
+                        Don't have an account? Sign Up
+                    </Link>
+                </div>
             </form>
         </div>
     );
