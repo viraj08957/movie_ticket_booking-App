@@ -21,19 +21,30 @@ const Login = () => {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log('Form Data:', formData); // Log form data
+
         try {
             const response = await axios.post('http://localhost:8000/api/auth/login', formData);
-            const { role, email, token } = response.data;
+            console.log('Server response:', response.data); // Log server response
 
-            // Store email and token in localStorage
-            localStorage.setItem('email', email);
-            localStorage.setItem('token', token);
+            const { role, token, message } = response.data;
 
-            // Navigate based on user role
-            if (role === 'admin') {
-                navigate('/admin');
+            // Extract email from formData, since it's not returned from the server
+            const { email } = formData;
+
+            // Check if email and token are defined
+            if (email && token) {
+                localStorage.setItem('email', email);
+                localStorage.setItem('token', token);
+
+                // Navigate based on user role
+                if (role === 'admin') {
+                    navigate('/admin');
+                } else {
+                    navigate('/userpage');
+                }
             } else {
-                navigate('/userpage');
+                throw new Error('Email or token is missing in the response');
             }
         } catch (error) {
             setError(error.response?.data?.message || 'There was an error logging in!');
@@ -89,3 +100,4 @@ const Login = () => {
 };
 
 export default Login;
+

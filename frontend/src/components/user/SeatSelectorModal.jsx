@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SeatSelectorModal = ({ isOpen, onClose, movie }) => {
+const SeatSelectorModal = ({ isOpen, onClose, movie, schedule }) => {
     const [selectedSeats, setSelectedSeats] = useState([]);
 
     if (!isOpen) return null;
@@ -51,7 +51,22 @@ const SeatSelectorModal = ({ isOpen, onClose, movie }) => {
                     <div className="mb-6">
                         <h3 className="text-xl font-semibold text-white">{movie.title}</h3>
                         <p className="text-gray-400 mb-2">{movie.genre}</p>
-                        <p className="text-gray-300">{movie.description}</p>
+                        <p className="text-gray-300 mb-4">{movie.description}</p>
+                        {/* Show Schedule */}
+                        {schedule.length > 0 && (
+                            <div className="text-gray-300">
+                                <h4 className="text-lg font-semibold mb-2">Show Schedule</h4>
+                                <ul>
+                                    {schedule.map((show) => (
+                                        <li key={show._id} className="mb-2">
+                                            <p className="text-gray-400">{new Date(show.date).toDateString()}</p>
+                                            <p className="text-gray-300">{show.time}</p>
+                                            <p className="text-gray-300">Available Seats: {show.availableSeats}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 )}
                 <div className="grid grid-cols-10 gap-2 mb-4">

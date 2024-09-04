@@ -9,6 +9,7 @@ const BuyMoviePage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState(null); // State to store the selected movie
+    const [schedule, setSchedule] = useState([]); // State to store the schedule
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -30,19 +31,33 @@ const BuyMoviePage = () => {
         setSearchTerm(e.target.value);
     };
 
-    const filteredMovies = movies.filter(movie =>
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const fetchSchedule = async (movieId) => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/shows/get-all-shows');
+            // Filter the schedule based on the selected movieId
+            const filteredSchedule = response.data.filter(show => show.movieId._id === movieId);
+            setSchedule(filteredSchedule);
+        } catch (err) {
+            setError('Failed to fetch schedule');
+            console.error(err);
+        }
+    };
 
-    const openModal = (movie) => {
+    const openModal = async (movie) => {
         setSelectedMovie(movie);
+        await fetchSchedule(movie._id); // Fetch the schedule for the selected movie
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedMovie(null); // Clear selected movie when closing the modal
+        setSchedule([]); // Clear schedule when closing the modal
     };
+
+    const filteredMovies = movies.filter(movie =>
+        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     if (loading) return <div className="text-center py-4 text-gray-400">Loading...</div>;
     if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
@@ -93,6 +108,7 @@ const BuyMoviePage = () => {
                     isOpen={isModalOpen}
                     onClose={closeModal}
                     movie={selectedMovie} // Pass the selected movie
+                    schedule={schedule} // Pass the schedule data
                 />
             )}
         </div>
@@ -100,3 +116,4 @@ const BuyMoviePage = () => {
 };
 
 export default BuyMoviePage;
+
