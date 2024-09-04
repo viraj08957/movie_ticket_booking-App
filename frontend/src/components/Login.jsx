@@ -10,6 +10,7 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    // Handle input change
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -17,6 +18,7 @@ const Login = () => {
         });
     };
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {

@@ -50,9 +50,9 @@ const UserNavbar = () => {
     const handleLogout = () => {
         // Remove email and password from localStorage
         localStorage.removeItem('email');
-        localStorage.removeItem('password');
+        localStorage.removeItem('token');
         // Redirect to the home page
-        navigate('/');
+        navigate('/login');
     };
 
     return (
@@ -88,10 +88,12 @@ const UserNavbar = () => {
                         <FaFilm className="text-xl" />
                         <span className="ml-2">Book Ticket</span>
                     </Link>
-                    <Link to="/wishlist" className="flex items-center">
-                        <FaHeart className="text-xl" />
-                        <span className="ml-2">Wishlist</span>
+
+                    <Link to="/show-details" className="flex items-center">
+                        <FaFilm className="text-xl" />
+                        <span className="ml-2">show details</span>
                     </Link>
+                    
                     <div className="relative">
                         <button onClick={handleProfileClick} className="flex items-center">
                             <FaUser className="text-xl" />

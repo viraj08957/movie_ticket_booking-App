@@ -1,25 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import Slider from 'react-slick';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Slider from 'react-slick';
 import UserNavbar from './UserNavbar';
 
 const UserPage = () => {
   const [movies, setMovies] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovies = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login'); // Redirect to login if no token
+        return;
+      }
+
       try {
-        const response = await axios.get('http://localhost:8000/api/movies');
+        const response = await axios.get('http://localhost:8000/api/movies', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         setMovies(response.data);
       } catch (error) {
         console.error('Error fetching movies:', error);
+        // Optionally handle error, e.g., redirect to login if there's a 401 error
       }
     };
 
     fetchMovies();
-  }, []);
+  }, [navigate]);
 
-  // Slider settings
   const sliderSettings = {
     dots: true,
     infinite: true,
@@ -28,7 +40,6 @@ const UserPage = () => {
     slidesToScroll: 1,
   };
 
-  // Your custom image links
   const sliderImages = [
     'https://assets-in.bmscdn.com/promotions/cms/creatives/1725020910681_mirajwebbanner.jpg',
     'https://assetscdn1.paytm.com/images/catalog/view_item/2800824/1723644537557.jpg?format=webp&imwidth=1750',
