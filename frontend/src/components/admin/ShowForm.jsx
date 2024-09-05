@@ -6,6 +6,7 @@ const ShowForm = ({ onClose }) => {
     date: '',
     time: '',
     availableSeats: '',
+    ticketPrice: '', // Add ticketPrice field
   });
   const [movies, setMovies] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState('');
@@ -111,6 +112,20 @@ const ShowForm = ({ onClose }) => {
               id="availableSeats"
               name="availableSeats"
               value={formData.availableSeats}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-700 bg-gray-900 text-gray-200 rounded"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2" htmlFor="ticketPrice">
+              Ticket Price (in INR)
+            </label>
+            <input
+              type="number"
+              id="ticketPrice"
+              name="ticketPrice"
+              value={formData.ticketPrice}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-700 bg-gray-900 text-gray-200 rounded"
               required

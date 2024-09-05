@@ -1,12 +1,30 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Make sure axios is installed and imported
 
 const SeatSelectorModal = ({ isOpen, onClose, movie }) => {
     const [selectedSeats, setSelectedSeats] = useState([]);
+    const [showDetails, setShowDetails] = useState(null);
+    const [ticketPrice, setTicketPrice] = useState(0);
     const rows = 5; // Number of rows
     const seatsPerRow = 10; // Number of seats per row
 
     useEffect(() => {
-        // Fetch show details if needed
+        if (movie) {
+            // Fetch show details based on the movie title
+            axios.get(`http://localhost:8000/api/shows/get-all-shows`)
+                .then(response => {
+                    const shows = response.data;
+                    // Find the show that matches the movie title
+                    const currentShow = shows.find(show => show.movieTitle === movie.title);
+                    if (currentShow) {
+                        setShowDetails(currentShow);
+                        setTicketPrice(currentShow.ticketPrice);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching show details:', error.message);
+                });
+        }
     }, [movie]);
 
     if (!isOpen) return null;
@@ -37,7 +55,7 @@ const SeatSelectorModal = ({ isOpen, onClose, movie }) => {
     const initiatePayment = () => {
         const options = {
             key: 'rzp_test_RulMO7WDmFkmi2', // Replace with your Razorpay Key ID
-            amount: 30000, // Amount in paise (e.g., 50000 paise = ₹500)
+            amount: ticketPrice * 100, // Amount in paise (e.g., 50000 paise = ₹500)
             currency: 'INR',
             name: 'iCinema',
             description: 'Movie Ticket Payment',
@@ -73,6 +91,17 @@ const SeatSelectorModal = ({ isOpen, onClose, movie }) => {
                         <p className="text-gray-400 mb-2">{movie.description}</p>
                     </div>
                 </div>
+
+                {/* Show Details */}
+                {showDetails && (
+                    <div className="mb-4">
+                        <h3 className="text-lg font-semibold mb-2">Show Details</h3>
+                        
+                        <p className="mb-2"><strong>Time:</strong> {showDetails.time}</p>
+                        
+                        <p className="mb-2"><strong>Ticket Price:</strong> ₹{showDetails.ticketPrice}</p>
+                    </div>
+                )}
 
                 {/* Seat Selection */}
                 <h3 className="text-lg font-semibold mb-2">Select Seats</h3>
