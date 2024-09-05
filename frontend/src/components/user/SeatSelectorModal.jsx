@@ -5,6 +5,7 @@ const SeatSelectorModal = ({ isOpen, onClose, movie }) => {
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [showDetails, setShowDetails] = useState(null);
     const [ticketPrice, setTicketPrice] = useState(0);
+    const [userEmail, setUserEmail] = useState(''); // You might want to set this from user authentication context
     const rows = 5; // Number of rows
     const seatsPerRow = 10; // Number of seats per row
 
@@ -42,26 +43,47 @@ const SeatSelectorModal = ({ isOpen, onClose, movie }) => {
         setSelectedSeats(newSelectedSeats);
     };
 
-    const handleBookTicket = () => {
+    const handleBookTicket = async () => {
         if (selectedSeats.length === 0) {
             alert('No seats selected. Please select seats before booking.');
             return;
         }
 
-        // Display Razorpay payment gateway
-        initiatePayment();
+        try {
+            // Save ticket details regardless of payment status
+            await saveTicketDetails();
+            // Display Razorpay payment gateway
+            initiatePayment();
+        } catch (error) {
+            console.error('Error booking ticket:', error.message);
+        }
+    };
+
+    const saveTicketDetails = async () => {
+        try {
+            await axios.post('http://localhost:8000/api/tickets/add-ticket', {
+                email: userEmail,
+                movieTitle: movie.title,
+                dateOfPurchase: new Date().toISOString(),
+                timeOfShow: showDetails.time,
+                ticketPrice: ticketPrice,
+                seats: selectedSeats,
+            });
+        } catch (error) {
+            console.error('Error saving ticket details:', error.message);
+        }
     };
 
     const initiatePayment = () => {
         const options = {
             key: 'rzp_test_RulMO7WDmFkmi2', // Replace with your Razorpay Key ID
-            amount: ticketPrice * 100, // Amount in paise (e.g., 50000 paise = ₹500)
+            amount: ticketPrice * selectedSeats.length * 100, // Amount in paise (e.g., 50000 paise = ₹500)
             currency: 'INR',
             name: 'iCinema',
             description: 'Movie Ticket Payment',
             handler: function (response) {
                 alert(`Payment successful!\nPayment ID: ${response.razorpay_payment_id}`);
-                // You can add further logic to handle successful payment here
+                // Additional logic for successful payment can be added here
                 onClose(); // Close the modal after successful payment
             },
             prefill: {

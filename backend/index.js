@@ -7,7 +7,8 @@ const authRoutes = require('./routes/auth');
 const movieRoutes = require('./routes/movie');
 const showRoutes = require('./routes/Show');
 const cinemaHallRoutes = require("./routes/cinemaHall");
-const contactRoutes = require("./routes/contact")
+const contactRoutes = require("./routes/contact");
+const ticketRoutes = require("./routes/ticket");
 
 
 
@@ -43,7 +44,7 @@ app.use('/api/movies', movieRoutes);
 app.use('/api/shows', showRoutes);
 app.use('/api/cinema-halls',cinemaHallRoutes);
 app.use('/api/contact',contactRoutes);
-
+app.use('/api/tickets',ticketRoutes);
 
 
 
