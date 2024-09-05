@@ -30,9 +30,9 @@ const ShowDetailsPage = () => {
         <table className="w-full table-auto bg-gray-800 bg-opacity-90 rounded-lg shadow-lg">
           <thead>
             <tr className="bg-gray-700 bg-opacity-90">
-              <th className="p-4 text-left text-gray-200">Show ID</th>
+              <th className="p-4 text-left text-gray-200">Show Id</th>
               <th className="p-4 text-left text-gray-200">Movie Title</th>
-              <th className="p-4 text-left text-gray-200">Date</th>
+              <th className="p-4 text-left text-gray-200">Ticket Price</th>
               <th className="p-4 text-left text-gray-200">Time</th>
               <th className="p-4 text-left text-gray-200">Available Seats</th>
             </tr>
@@ -42,7 +42,7 @@ const ShowDetailsPage = () => {
               <tr key={show._id} className="border-b border-gray-700 hover:bg-gray-700 bg-opacity-90">
                 <td className="p-4 text-gray-300">{show._id}</td>
                 <td className="p-4 text-gray-300">{show.movieId.title}</td>
-                <td className="p-4 text-gray-300">{new Date(show.date).toLocaleDateString()}</td>
+                <td className="p-4 text-gray-300">{show.ticketPrice}</td>
                 <td className="p-4 text-gray-300">{show.time}</td>
                 <td className="p-4 text-gray-300">{show.availableSeats}</td>
               </tr>

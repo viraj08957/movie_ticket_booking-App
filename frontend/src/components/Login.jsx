@@ -23,18 +23,23 @@ const Login = () => {
         e.preventDefault();
         console.log('Form Data:', formData); // Log form data
 
+        // Check for predefined admin credentials
+        if (formData.email === 'admin123@gmail.com' && formData.password === 'adminpassword123') {
+            localStorage.setItem('email', formData.email);
+            localStorage.setItem('token', 'dummy-token'); // Dummy token for testing
+            navigate('/admin');
+            return;
+        }
+
         try {
             const response = await axios.post('http://localhost:8000/api/auth/login', formData);
             console.log('Server response:', response.data); // Log server response
 
             const { role, token, message } = response.data;
 
-            // Extract email from formData, since it's not returned from the server
-            const { email } = formData;
-
             // Check if email and token are defined
-            if (email && token) {
-                localStorage.setItem('email', email);
+            if (formData.email && token) {
+                localStorage.setItem('email', formData.email);
                 localStorage.setItem('token', token);
 
                 // Navigate based on user role
@@ -100,4 +105,3 @@ const Login = () => {
 };
 
 export default Login;
-

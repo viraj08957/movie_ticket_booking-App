@@ -30,7 +30,7 @@ router.post('/add-movie', validateMovie, async (req, res) => {
             releaseDate,
             image,
         });
-
+        
         await newMovie.save();
         res.status(201).json({ message: 'Movie added successfully', movie: newMovie });
     } catch (error) {

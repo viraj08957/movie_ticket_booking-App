@@ -21,6 +21,10 @@ const showSchema = new mongoose.Schema({
   availableSeats: {
     type: Number,
     required: true
+  },
+  ticketPrice:{
+    type:Number,
+    required:true
   }
 });
 

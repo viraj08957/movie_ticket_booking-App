@@ -14,7 +14,7 @@ const NavigationBar = () => {
           <span className="text-xl font-bold">i Cinema</span>
         </Link>
         <div className="space-x-4">
-          
+          <Link to="/" className="hover:text-blue-500">Home</Link>
           <Link to="/about" className="hover:text-blue-500">About</Link>
           <Link to="/contact" className="hover:text-blue-500">Contact</Link>
           <Link to="/login" className="hover:text-blue-500">Login</Link>

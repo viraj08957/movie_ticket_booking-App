@@ -104,13 +104,13 @@ const BuyMoviePage = () => {
 
             {/* Floating Modal */}
             {selectedMovie && (
-                <SeatSelectorModal
-                    isOpen={isModalOpen}
-                    onClose={closeModal}
-                    movie={selectedMovie} // Pass the selected movie
-                    schedule={schedule} // Pass the schedule data
-                />
-            )}
+    <SeatSelectorModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        movie={selectedMovie}
+        schedule={schedule}
+    />
+)}
         </div>
     );
 };

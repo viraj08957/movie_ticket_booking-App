@@ -1,80 +1,120 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const SeatSelectorModal = ({ isOpen, onClose, movie, schedule }) => {
+const SeatSelectorModal = ({ isOpen, onClose, movie }) => {
     const [selectedSeats, setSelectedSeats] = useState([]);
+    const rows = 5; // Number of rows
+    const seatsPerRow = 10; // Number of seats per row
+
+    useEffect(() => {
+        // Fetch show details if needed
+    }, [movie]);
 
     if (!isOpen) return null;
 
     const handleSeatClick = (seat) => {
-        setSelectedSeats((prev) =>
-            prev.includes(seat)
-                ? prev.filter((s) => s !== seat)
-                : [...prev, seat]
-        );
+        const newSelectedSeats = [...selectedSeats];
+        const seatIndex = newSelectedSeats.indexOf(seat);
+
+        if (seatIndex > -1) {
+            newSelectedSeats.splice(seatIndex, 1);
+        } else {
+            newSelectedSeats.push(seat);
+        }
+
+        setSelectedSeats(newSelectedSeats);
     };
 
-    const renderSeats = () => {
-        const totalSeats = 100;
-        const seatLayout = Array.from({ length: totalSeats }, (_, index) => {
-            let rowClass = '';
-            if (index < 20) rowClass = 'bg-red-500'; // Prime seats
-            else if (index < 50) rowClass = 'bg-yellow-500'; // Gold seats
-            else rowClass = 'bg-gray-500'; // Classic seats
+    const handleBookTicket = () => {
+        if (selectedSeats.length === 0) {
+            alert('No seats selected. Please select seats before booking.');
+            return;
+        }
 
-            const seatNumber = index + 1;
-            const isSelected = selectedSeats.includes(index);
-
-            return (
-                <div
-                    key={index}
-                    className={`w-12 h-12 flex items-center justify-center rounded-sm cursor-pointer ${rowClass} ${
-                        isSelected ? 'border-4 border-blue-700' : ''
-                    }`}
-                    onClick={() => handleSeatClick(index)}
-                >
-                    <span className={`text-xs ${isSelected ? 'text-white' : 'text-gray-200'}`}>
-                        {seatNumber}
-                    </span>
-                </div>
-            );
-        });
-
-        return seatLayout;
+        // Display Razorpay payment gateway
+        initiatePayment();
     };
+
+    const initiatePayment = () => {
+        const options = {
+            key: 'rzp_test_RulMO7WDmFkmi2', // Replace with your Razorpay Key ID
+            amount: 30000, // Amount in paise (e.g., 50000 paise = ₹500)
+            currency: 'INR',
+            name: 'iCinema',
+            description: 'Movie Ticket Payment',
+            handler: function (response) {
+                alert(`Payment successful!\nPayment ID: ${response.razorpay_payment_id}`);
+                // You can add further logic to handle successful payment here
+                onClose(); // Close the modal after successful payment
+            },
+            prefill: {
+                name: 'Viraj Raut',
+                email: 'virajraut789.com',
+                contact: '9130367611',
+            },
+            theme: {
+                color: '#3399cc',
+            },
+        };
+
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.open();
+    };
+
+    const seatClass = "bg-blue-500"; // Class for each seat
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
-            <div className="bg-gray-800 p-6 rounded-lg w-3/4 max-w-2xl">
-                <h2 className="text-2xl font-bold mb-4 text-white">Select Seats</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+            <div className="bg-gray-800 text-white p-4 rounded-lg w-full max-w-2xl">
                 {/* Movie Details */}
-                {movie && (
-                    <div className="mb-6">
-                        <h3 className="text-xl font-semibold text-white">{movie.title}</h3>
-                        <p className="text-gray-400 mb-2">{movie.genre}</p>
-                        <p className="text-gray-300 mb-4">{movie.description}</p>
-                        {/* Show Schedule */}
-                        {schedule.length > 0 && (
-                            <div className="text-gray-300">
-                                <h4 className="text-lg font-semibold mb-2">Show Schedule</h4>
-                                <ul>
-                                    {schedule.map((show) => (
-                                        <li key={show._id} className="mb-2">
-                                            <p className="text-gray-400">{new Date(show.date).toDateString()}</p>
-                                            <p className="text-gray-300">{show.time}</p>
-                                            <p className="text-gray-300">Available Seats: {show.availableSeats}</p>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
+                <div className="mb-4 flex items-center">
+                    <img src={movie.image} alt={movie.title} className="w-32 h-auto rounded-lg mr-4" />
+                    <div>
+                        <h2 className="text-xl font-semibold mb-2">{movie.title}</h2>
+                        <p className="text-gray-400 mb-2">{movie.description}</p>
                     </div>
-                )}
-                <div className="grid grid-cols-10 gap-2 mb-4">
-                    {renderSeats()}
                 </div>
-                <div className="flex justify-between mt-4">
-                    <button onClick={onClose} className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Close</button>
-                    <button className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800">Confirm</button>
+
+                {/* Seat Selection */}
+                <h3 className="text-lg font-semibold mb-2">Select Seats</h3>
+                <div className="grid grid-cols-12 gap-1 mb-4">
+                    {/* Row Labels */}
+                    <div></div> {/* Empty cell for spacing */}
+                    {Array.from({ length: seatsPerRow }).map((_, seatIndex) => (
+                        <div key={`header-${seatIndex}`} className="text-center text-gray-400 text-sm">
+                            {seatIndex + 1}
+                        </div>
+                    ))}
+                    {/* Seat Grid */}
+                    {Array.from({ length: rows }).map((_, rowIndex) => (
+                        <React.Fragment key={rowIndex}>
+                            <div className="text-center text-gray-400 text-sm">
+                                {String.fromCharCode(65 + rowIndex)}
+                            </div>
+                            {Array.from({ length: seatsPerRow }).map((_, seatIndex) => {
+                                const seatNumber = `${String.fromCharCode(65 + rowIndex)}-${seatIndex + 1}`;
+                                return (
+                                    <div
+                                        key={seatNumber}
+                                        onClick={() => handleSeatClick(seatNumber)}
+                                        className={`${seatClass} p-1 cursor-pointer text-center text-white rounded ${selectedSeats.includes(seatNumber) ? 'bg-blue-700' : ''}`}
+                                    >
+                                        {seatNumber}
+                                    </div>
+                                );
+                            })}
+                        </React.Fragment>
+                    ))}
+                </div>
+
+                {/* Buttons */}
+                <div className="mt-4 flex justify-between">
+                    <button onClick={onClose} className="bg-gray-600 text-white px-4 py-2 rounded text-sm">Close</button>
+                    <button
+                        onClick={handleBookTicket}
+                        className="bg-green-500 text-white px-4 py-2 rounded text-sm"
+                    >
+                        Book Ticket
+                    </button>
                 </div>
             </div>
         </div>

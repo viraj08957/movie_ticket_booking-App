@@ -69,31 +69,35 @@ const Home = () => {
             Unleash the Magic of Movies – Experience Entertainment Like Never Before!
           </p>
         </section>
-        <section className="mt-8 px-4 py-8">
-          <h2 className="text-2xl font-bold mb-4 text-center">Featured Movies</h2>
-          <div className="flex justify-center">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {movies.map((movie) => (
-                <div
-                  key={movie.id}
-                  className="bg-gray-800 p-4 rounded-lg shadow-xl flex flex-col items-center"
-                  style={{ width: '300px', height: '450px' }} // Poster size dimensions
-                >
-                  <div className="relative w-full h-full mb-4">
-                    <img
-                      src={movie.image}
-                      alt={movie.title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      style={{ objectPosition: 'center' }}
-                    />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2 text-center">{movie.title}</h3>
-                  <p className="text-gray-400 text-center">{movie.description}</p>
-                </div>
-              ))}
-            </div>
+        <section className="mt-8 px-4 py-8 text-center">
+ 
+</section>
+
+<section className="mt-8 px-4 py-8">
+  <h2 className="text-2xl font-bold mb-4 text-center">Featured Movies</h2>
+  <div className="flex justify-center">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {movies.map((movie) => (
+        <div
+          key={movie.id}
+          className="bg-gray-800 p-4 rounded-lg shadow-xl flex flex-col items-center"
+          style={{ width: '300px', height: '450px' }} // Poster size dimensions
+        >
+          <div className="relative w-full h-full mb-4">
+            <img
+              src={movie.image}
+              alt={movie.title}
+              className="absolute inset-0 w-full h-full object-contain"
+              style={{ objectPosition: 'center' }}
+            />
           </div>
-        </section>
+          <h3 className="text-xl font-semibold mb-2 text-center">{movie.title}</h3>
+          <p className="text-gray-400 text-center">{movie.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
       </main>
       <footer className="bg-gray-900 text-gray-200 py-4">
         <div className="container mx-auto flex justify-center space-x-6">
@@ -111,7 +115,7 @@ const Home = () => {
           </a>
         </div>
         <p className="text-center text-gray-400 mt-4">
-          © {new Date().getFullYear()} Your Company. All rights reserved.
+          © {new Date().getFullYear()} i Cinema. All rights reserved.
         </p>
       </footer>
     </div>

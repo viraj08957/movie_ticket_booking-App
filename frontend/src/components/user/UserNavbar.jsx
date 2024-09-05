@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaSearch, FaUser, FaFilm, FaHeart, FaSignOutAlt } from 'react-icons/fa'; // Import wishlist and logout icons
+import { FaSearch, FaUser, FaFilm, FaSignOutAlt, FaTimes } from 'react-icons/fa'; // Import close icon
 import axios from 'axios';
 
 const UserNavbar = () => {
@@ -55,6 +55,12 @@ const UserNavbar = () => {
         navigate('/login');
     };
 
+    // Helper function to format the release date
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    };
+
     return (
         <>
             <nav className="bg-gray-900 text-white p-4 flex items-center justify-between dark:bg-gray-800 dark:text-gray-200">
@@ -91,7 +97,7 @@ const UserNavbar = () => {
 
                     <Link to="/show-details" className="flex items-center">
                         <FaFilm className="text-xl" />
-                        <span className="ml-2">show details</span>
+                        <span className="ml-2">Show Details</span>
                     </Link>
                     
                     <div className="relative">
@@ -116,22 +122,29 @@ const UserNavbar = () => {
 
             {showSearchResult && searchResult && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-gray-800 p-8 rounded-lg w-1/2 max-w-lg">
+                    <div className="bg-gray-800 p-8 rounded-lg w-11/12 max-w-4xl relative">
+                        <button 
+                            onClick={handleCloseSearchResult}
+                            className="absolute top-2 right-2 text-gray-200 hover:text-gray-400"
+                        >
+                            <FaTimes className="text-2xl" />
+                        </button>
                         <h2 className="text-2xl font-bold mb-4 text-gray-200">Search Result</h2>
-                        <div className="mb-4">
-                            <div className="w-full h-80 overflow-hidden mb-4">
+                        <div className="flex flex-col md:flex-row">
+                            <div className="flex-shrink-0 w-full md:w-1/2">
                                 <img 
                                     src={searchResult.image} 
                                     alt={searchResult.title} 
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-auto object-cover rounded"
                                 />
                             </div>
-                            <p className="text-gray-200"><strong>Title:</strong> {searchResult.title}</p>
-                            <p className="text-gray-200"><strong>Description:</strong> {searchResult.description}</p>
-                            <p className="text-gray-200"><strong>Genre:</strong> {searchResult.genre}</p>
-                            <p className="text-gray-200"><strong>Release Date:</strong> {searchResult.releaseDate}</p>
+                            <div className="md:ml-8 mt-4 md:mt-0 text-gray-200">
+                                <p><strong>Title:</strong> {searchResult.title}</p>
+                                <p><strong>Description:</strong> {searchResult.description}</p>
+                                <p><strong>Genre:</strong> {searchResult.genre}</p>
+                                <p><strong>Release Date:</strong> {formatDate(searchResult.releaseDate)}</p>
+                            </div>
                         </div>
-                        
                     </div>
                 </div>
             )}

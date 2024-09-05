@@ -6,7 +6,7 @@ const showController = require("../controllers/showController");
 
 router.post('/add-show', async (req, res) => {
     try {
-      const { movieTitle, date, time, availableSeats } = req.body;
+      const { movieTitle, date, time, availableSeats,ticketPrice } = req.body;
   
       const movie = await Movie.findOne({ title: movieTitle });
   
@@ -21,6 +21,7 @@ router.post('/add-show', async (req, res) => {
         date,
         time,
         availableSeats,
+        ticketPrice
       });
   
       await newShow.save();

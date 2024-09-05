@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaEdit, FaTrash, FaSearch, FaEye } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaSearch, FaEye, FaSignOutAlt } from 'react-icons/fa';
 import MovieForm from './MovieForm';
 import ShowForm from './ShowForm';
 import CinemaHallForm from './CinemaHallForm';
@@ -8,7 +8,7 @@ import CinemaHallForm from './CinemaHallForm';
 const AdminPage = () => {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [moviesPerPage] = useState(10);
+  const [moviesPerPage] = useState(6); // Changed to 6
   const [showForm, setShowForm] = useState(false);
   const [currentMovie, setCurrentMovie] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,6 +44,7 @@ const AdminPage = () => {
     fetchCinemaHalls();
   }, []);
 
+  // Calculate pagination
   const indexOfLastMovie = currentPage * moviesPerPage;
   const indexOfFirstMovie = indexOfLastMovie - moviesPerPage;
   const currentMovies = movies.slice(indexOfFirstMovie, indexOfLastMovie);
@@ -131,6 +132,13 @@ const AdminPage = () => {
     setSelectedCinemaHall(null);
   };
 
+  const handleLogout = () => {
+    // Clear authentication tokens or session data here
+    localStorage.removeItem('authToken');
+    // Redirect to login page
+    window.location.href = '/login';
+  };
+
   return (
     <div
       className="min-h-screen bg-gray-900 text-gray-200 p-8"
@@ -141,7 +149,16 @@ const AdminPage = () => {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 flex items-center"
+        >
+          <FaSignOutAlt className="mr-2" />
+          Logout
+        </button>
+      </div>
       <p className="mb-4">Welcome to the admin dashboard. Here you can manage various aspects of the application.</p>
       <div className="relative mb-4">
         <div className="flex justify-end mb-4">
@@ -208,7 +225,7 @@ const AdminPage = () => {
                   <th className="p-3 text-left text-sm font-semibold text-gray-200">Genre</th>
                   <th className="p-3 text-left text-sm font-semibold text-gray-200">Release Date</th>
                   <th className="p-3 text-left text-sm font-semibold text-gray-200">Image</th>
-                  <th className="p-3 text-left text-sm font-semibold text-gray-200">Actions</th>
+                  <th className="p-3 text-left text-sm font-semibold text-gray-200">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -241,6 +258,7 @@ const AdminPage = () => {
             </table>
           </div>
         )}
+
         {showCinemaHalls && (
           <div className="overflow-x-auto mt-8">
             <h2 className="text-2xl font-bold mb-4">Cinema Halls</h2>
@@ -252,7 +270,7 @@ const AdminPage = () => {
                   <tr className="border-b border-gray-600">
                     <th className="p-3 text-left text-sm font-semibold text-gray-200">Hall ID</th>
                     <th className="p-3 text-left text-sm font-semibold text-gray-200">Film name</th>
-                    <th className="p-3 text-left text-sm font-semibold text-gray-200">Total seats </th>
+                    <th className="p-3 text-left text-sm font-semibold text-gray-200">Total seats</th>
                     <th className="p-3 text-left text-sm font-semibold text-gray-200">Sold tickets</th>
                     <th className="p-3 text-left text-sm font-semibold text-gray-200">Price of show</th>
                     <th className="p-3 text-left text-sm font-semibold text-gray-200">Date</th>
