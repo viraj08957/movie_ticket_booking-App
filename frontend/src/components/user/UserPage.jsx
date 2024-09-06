@@ -17,7 +17,7 @@ const UserPage = () => {
       }
 
       try {
-        const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/movies', {
+        const response = await axios.get('http://localhost:8000/api/movies', {
           headers: {
             Authorization: `Bearer ${token}`
           }

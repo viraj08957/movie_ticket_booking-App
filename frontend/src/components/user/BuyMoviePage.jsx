@@ -14,7 +14,7 @@ const BuyMoviePage = () => {
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/movies');
+                const response = await axios.get('http://localhost:8000/api/movies');
                 setMovies(response.data);
             } catch (err) {
                 setError('Failed to fetch movies');
@@ -33,7 +33,7 @@ const BuyMoviePage = () => {
 
     const fetchSchedule = async (movieId) => {
         try {
-            const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/shows/get-all-shows');
+            const response = await axios.get('http://localhost:8000/api/shows/get-all-shows');
             // Filter the schedule based on the selected movieId
             const filteredSchedule = response.data.filter(show => show.movieId._id === movieId);
             setSchedule(filteredSchedule);

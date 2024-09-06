@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import SignUp from './components/SignUp';
 import Login from './components/Login';
 import Home from './components/Home';
-import AdminPage from './components/admin/adminPage';
+import AdminPage from './components/admin/AdminPage';
 import MovieForm from './components/admin/MovieForm';
 import ShowsList from './components/admin/ShowList';
 import 'slick-carousel/slick/slick.css';

@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import NavigationBar from '../components/NavigationBar';
@@ -30,10 +29,16 @@ const Home = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/movies');
+        const response = await axios.get('http://localhost:8000/api/movies', {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        console.log('API Response:', response.data); // Debugging log
         setMovies(response.data);
         setLoading(false);
       } catch (err) {
+        console.error('Error fetching movies:', err); // More detailed error log
         setError(err);
         setLoading(false);
       }
@@ -48,7 +53,10 @@ const Home = () => {
   return (
     <div
       className="flex flex-col min-h-screen bg-cover bg-center text-gray-200"
-      style={{ backgroundImage: 'url(https://plus.unsplash.com/premium_photo-1664303124313-126bf7456982?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)' }}
+      style={{
+        backgroundImage:
+          'url(https://plus.unsplash.com/premium_photo-1664303124313-126bf7456982?q=80&w=1973&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+      }}
     >
       <NavigationBar />
       <main className="flex-grow mt-16">
@@ -65,39 +73,34 @@ const Home = () => {
           <h1 className="text-3xl md:text-5xl font-bold mb-4">
             Discover Your Next Adventure – Where Every Movie Is a New Journey!
           </h1>
-          <p className="text-lg md:text-xl">
-            Unleash the Magic of Movies – Experience Entertainment Like Never Before!
-          </p>
+          <p className="text-lg md:text-xl">Unleash the Magic of Movies – Experience Entertainment Like Never Before!</p>
         </section>
-        <section className="mt-8 px-4 py-8 text-center">
- 
-</section>
 
-<section className="mt-8 px-4 py-8">
-  <h2 className="text-2xl font-bold mb-4 text-center">Featured Movies</h2>
-  <div className="flex justify-center">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {movies.map((movie) => (
-        <div
-          key={movie.id}
-          className="bg-gray-800 p-4 rounded-lg shadow-xl flex flex-col items-center"
-          style={{ width: '300px', height: '450px' }} // Poster size dimensions
-        >
-          <div className="relative w-full h-full mb-4">
-            <img
-              src={movie.image}
-              alt={movie.title}
-              className="absolute inset-0 w-full h-full object-contain"
-              style={{ objectPosition: 'center' }}
-            />
+        <section className="mt-8 px-4 py-8">
+          <h2 className="text-2xl font-bold mb-4 text-center">Featured Movies</h2>
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {movies.map((movie) => (
+                <div
+                  key={movie.id}
+                  className="bg-gray-800 p-4 rounded-lg shadow-xl flex flex-col items-center"
+                  style={{ width: '300px', height: '450px' }} // Poster size dimensions
+                >
+                  <div className="relative w-full h-full mb-4">
+                    <img
+                      src={movie.image}
+                      alt={movie.title}
+                      className="absolute inset-0 w-full h-full object-contain"
+                      style={{ objectPosition: 'center' }}
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2 text-center">{movie.title}</h3>
+                  <p className="text-gray-400 text-center">{movie.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <h3 className="text-xl font-semibold mb-2 text-center">{movie.title}</h3>
-          <p className="text-gray-400 text-center">{movie.description}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-</section>
+        </section>
       </main>
       <footer className="bg-gray-900 text-gray-200 py-4">
         <div className="container mx-auto flex justify-center space-x-6">
@@ -114,9 +117,7 @@ const Home = () => {
             <FaLinkedin size={24} />
           </a>
         </div>
-        <p className="text-center text-gray-400 mt-4">
-          © {new Date().getFullYear()} i Cinema. All rights reserved.
-        </p>
+        <p className="text-center text-gray-400 mt-4">© {new Date().getFullYear()} i Cinema. All rights reserved.</p>
       </footer>
     </div>
   );

@@ -21,7 +21,7 @@ const UserNavbar = () => {
     const handleSearch = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/movies/search-by-name', {
+            const response = await axios.get('http://localhost:8000/api/movies/search-by-name', {
                 params: { name: searchTerm }
             });
             if (response.data.length > 0) {

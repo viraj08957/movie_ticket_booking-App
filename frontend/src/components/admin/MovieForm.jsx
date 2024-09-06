@@ -35,10 +35,10 @@ const MovieForm = ({ onClose, movie }) => {
     try {
       if (movie) {
         // Update movie
-        await axios.put(`https://movie-ticket-booking-app-pnbi.onrender.com/api/movies/update-movie/${movie._id}`, formData);
+        await axios.put(`http://localhost:8000/api/movies/update-movie/${movie._id}`, formData);
       } else {
         // Add new movie
-        await axios.post('https://movie-ticket-booking-app-pnbi.onrender.com/api/movies/add-movie', formData);
+        await axios.post('http://localhost:8000/api/movies/add-movie', formData);
       }
       onClose();
     } catch (error) {

@@ -16,7 +16,7 @@ const UserProfile = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get('/api/auth/user'); // Replace with your API endpoint
+                const response = await axios.get('http://localhost:8000/api/auth/user'); // Replace with your API endpoint
                 setUser(response.data);
                 setFormData({
                     firstName: response.data.firstName,
@@ -45,7 +45,7 @@ const UserProfile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put('/api/auth/update-user', formData); // Replace with your API endpoint
+            await axios.put('http://localhost:8000/api/auth/update-user', formData); // Replace with your API endpoint
             setUser(formData);
             setEditing(false);
         } catch (error) {

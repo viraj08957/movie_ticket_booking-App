@@ -10,7 +10,7 @@ const ShowsList = () => {
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/shows/get-all-shows');
+        const response = await axios.get('http://localhost:8000/api/shows/get-all-shows');
         setShows(response.data);
         setLoading(false);
       } catch (error) {
@@ -24,7 +24,7 @@ const ShowsList = () => {
 
   const handleDeleteShow = async (id) => {
     try {
-      await axios.delete(`https://movie-ticket-booking-app-pnbi.onrender.com/api/shows/delete-show/${id}`);
+      await axios.delete(`http://localhost:8000/api/shows/delete-show/${id}`);
       setShows(shows.filter(show => show._id !== id));
     } catch (error) {
       setError('Error deleting show');

@@ -32,7 +32,7 @@ const Login = () => {
         }
 
         try {
-            const response = await axios.post('https://movie-ticket-booking-app-pnbi.onrender.com/api/auth/login', formData);
+            const response = await axios.post('http://localhost:8000/api/auth/login', formData);
             console.log('Server response:', response.data); // Log server response
 
             const { role, token, message } = response.data;

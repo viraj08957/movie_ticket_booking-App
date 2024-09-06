@@ -12,7 +12,7 @@ const SeatSelectorModal = ({ isOpen, onClose, movie }) => {
     useEffect(() => {
         if (movie) {
             // Fetch show details based on the movie title
-            axios.get(`https://movie-ticket-booking-app-pnbi.onrender.com/api/shows/get-all-shows`)
+            axios.get(`http://localhost:8000/api/shows/get-all-shows`)
                 .then(response => {
                     const shows = response.data;
                     // Find the show that matches the movie title
@@ -61,7 +61,7 @@ const SeatSelectorModal = ({ isOpen, onClose, movie }) => {
 
     const saveTicketDetails = async () => {
         try {
-            await axios.post('https://movie-ticket-booking-app-pnbi.onrender.com/api/tickets/add-ticket', {
+            await axios.post('http://localhost:8000/api/tickets/add-ticket', {
                 email: userEmail,
                 movieTitle: movie.title,
                 dateOfPurchase: new Date().toISOString(),

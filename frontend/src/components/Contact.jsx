@@ -27,7 +27,7 @@ const Contact = () => {
     setSubmitError(null);
 
     try {
-      const response = await fetch('https://movie-ticket-booking-app-pnbi.onrender.com/api/contact', {
+      const response = await fetch('http://localhost:8000/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
