@@ -23,7 +23,7 @@ const CinemaHallForm = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8000/api/cinema-halls/add-cinema-hall', formData);
+      await axios.post('https://movie-ticket-booking-app-pnbi.onrender.com/api/cinema-halls/add-cinema-hall', formData);
       onClose(); // Close the form on successful submission
     } catch (error) {
       console.error('Error adding cinema hall:', error);

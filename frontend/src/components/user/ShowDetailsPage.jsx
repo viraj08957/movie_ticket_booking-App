@@ -7,7 +7,7 @@ const ShowDetailsPage = () => {
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/shows/get-all-shows');
+        const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/shows/get-all-shows');
         setShows(response.data);
       } catch (error) {
         console.error('Error fetching shows:', error);

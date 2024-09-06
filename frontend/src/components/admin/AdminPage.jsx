@@ -23,7 +23,7 @@ const AdminPage = () => {
 
   const fetchMovies = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/movies');
+      const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/movies');
       setMovies(response.data);
     } catch (error) {
       console.error('Error fetching movies:', error);
@@ -32,7 +32,7 @@ const AdminPage = () => {
 
   const fetchCinemaHalls = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/cinema-halls');
+      const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/cinema-halls');
       setCinemaHalls(response.data);
     } catch (error) {
       console.error('Error fetching cinema halls:', error);
@@ -76,7 +76,7 @@ const AdminPage = () => {
 
   const handleDeleteMovieClick = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/movies/delete-movie/${id}`);
+      await axios.delete(`https://movie-ticket-booking-app-pnbi.onrender.com/api/movies/delete-movie/${id}`);
       setMovies(movies.filter(movie => movie._id !== id));
     } catch (error) {
       console.error('Error deleting movie:', error);
@@ -85,7 +85,7 @@ const AdminPage = () => {
 
   const handleDeleteCinemaHallClick = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/cinema-halls/${id}`);
+      await axios.delete(`https://movie-ticket-booking-app-pnbi.onrender.com/api/cinema-halls/${id}`);
       setCinemaHalls(cinemaHalls.filter(cinemaHall => cinemaHall._id !== id));
     } catch (error) {
       console.error('Error deleting cinema hall:', error);
@@ -104,7 +104,7 @@ const AdminPage = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/movies/search-by-name', {
+      const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/movies/search-by-name', {
         params: { name: searchTerm }
       });
       if (response.data.length > 0) {

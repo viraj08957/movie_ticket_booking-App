@@ -29,7 +29,7 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/register', formData);
+      const response = await axios.post('https://movie-ticket-booking-app-pnbi.onrender.com/api/auth/register', formData);
       alert(response.data.message);
       setShowOtpModal(true);
     } catch (error) {
@@ -45,7 +45,7 @@ const SignUp = () => {
   const handleOtpSubmit = async () => {
     try {
       console.log('Submitting OTP:', otp);
-      const response = await axios.post('http://localhost:8000/api/auth/verify-otp', { email: formData.email, otp });
+      const response = await axios.post('https://movie-ticket-booking-app-pnbi.onrender.com/api/auth/verify-otp', { email: formData.email, otp });
       console.log('Response:', response.data);
   
       if (response.data.success) {

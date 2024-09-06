@@ -15,7 +15,7 @@ const ShowForm = ({ onClose }) => {
     // Fetch list of movies
     const fetchMovies = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/movies'); // Endpoint to fetch movies
+        const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/movies'); // Endpoint to fetch movies
         setMovies(response.data);
       } catch (error) {
         console.error('Error fetching movies:', error);
@@ -40,7 +40,7 @@ const ShowForm = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8000/api/shows/add-show', {
+      await axios.post('https://movie-ticket-booking-app-pnbi.onrender.com/api/shows/add-show', {
         movieTitle: selectedMovie,
         ...formData,
       });

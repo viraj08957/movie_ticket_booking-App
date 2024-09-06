@@ -30,7 +30,7 @@ const Home = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/movies');
+        const response = await axios.get('https://movie-ticket-booking-app-pnbi.onrender.com/api/movies');
         setMovies(response.data);
         setLoading(false);
       } catch (err) {
